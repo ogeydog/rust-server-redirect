@@ -52,25 +52,20 @@
     const serversInfo = {
       "facepunch_premium": {
         "name": "[AU] Facepunch Premium",
-        "ip": "51.161.199.59",
-        "port": 28015,
         "description": "Official Facepunch server, Premium slot",
-        "redirectUrl": "steam://connect/51.161.199.59:28015"
+        // Your exact redirect link here:
+        "redirectUrl": "steam://run/252490//+connect 51.161.199.59:28015"
       },
       "facepunch_1": {
         "name": "[AU] Facepunch 1",
-        "ip": "51.161.199.44",
-        "port": 28015,
         "description": "Official Facepunch server 1",
-        "redirectUrl": "steam://connect/51.161.199.44:28015"
+        "redirectUrl": "steam://run/252490//+connect 51.161.199.44:28015"
       },
       "rustafied_au": {
         "name": "Rustafied.com - AU Medium",
-        "host": "aumedium.rustafied.com",
-        "port": 28015,
         "description": "Rustafied AU Medium server",
         "note": "Check IPv4 for the domain, may want to switch to IP for faster connect",
-        "redirectUrl": "steam://connect/aumedium.rustafied.com:28015"
+        "redirectUrl": "steam://run/252490//+connect aumedium.rustafied.com:28015"
       },
       "local_staging": {
         "name": "Local Staging",
@@ -84,7 +79,6 @@
       }
     };
 
-    // Utility: get URL query param
     function getQueryParam(param) {
       const params = new URLSearchParams(window.location.search);
       return params.get(param);
@@ -93,13 +87,12 @@
     const contentDiv = document.getElementById('content');
     const serverId = getQueryParam('server');
 
-    // Render index of servers
     function renderIndex() {
       const ul = document.createElement('ul');
       for (const [id, server] of Object.entries(serversInfo)) {
         const li = document.createElement('li');
         const link = document.createElement('a');
-        link.href = `?server=${id}`;
+        link.href = `connect.html?server=${id}`;  // Link to connect.html, not index.html
         link.textContent = server.name;
         li.appendChild(link);
         ul.appendChild(li);
@@ -108,23 +101,20 @@
       contentDiv.appendChild(ul);
     }
 
-    // Render specific server info with auto redirect
     function renderServer(id) {
       const server = serversInfo[id];
       if (!server) {
-        contentDiv.innerHTML = `<p>Server not found. <a href="./">Back to server list</a></p>`;
+        contentDiv.innerHTML = `<p>Server not found. <a href="connect.html">Back to server list</a></p>`;
         return;
       }
 
       contentDiv.innerHTML = `
         <h2>${server.name}</h2>
         <p>${server.description || ''}</p>
-        ${server.ip ? `<p>IP: ${server.ip}:${server.port || ''}</p>` : ''}
-        ${server.host ? `<p>Host: ${server.host}:${server.port || ''}</p>` : ''}
         ${server.note ? `<p><em>Note: ${server.note}</em></p>` : ''}
         <p>Redirecting to server in <span id="countdown">5</span> seconds...</p>
         <p><a href="${server.redirectUrl}">Click here if not redirected</a></p>
-        <p><a id="backLink" href="./">Back to server list</a></p>
+        <p><a id="backLink" href="connect.html">Back to server list</a></p>
       `;
 
       let seconds = 5;
@@ -140,7 +130,6 @@
       }, 1000);
     }
 
-    // Decide what to render
     if (serverId) {
       renderServer(serverId);
     } else {
