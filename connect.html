@@ -23,27 +23,12 @@
     li {
       margin: 0.5rem 0;
     }
-    a, button {
+    a {
       color: #007bff;
       text-decoration: none;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-size: 1rem;
-      padding: 0;
-      font-family: inherit;
     }
-    a:hover, button:hover {
+    a:hover {
       text-decoration: underline;
-    }
-    #backLink {
-      margin-top: 1rem;
-      display: inline-block;
-    }
-    #closeFail {
-      margin-top: 1rem;
-      color: #a00;
-      font-size: 0.95rem;
     }
     footer {
       margin-top: auto;
@@ -58,125 +43,44 @@
 <body>
 
   <h1>Rust Servers</h1>
-
-  <div id="content"></div>
+  <div id="content">
+    <p>Redirecting you now... if nothing happens, <a id="manualLink" href="#">click here</a>.</p>
+    <p>This tab will close in ~10 seconds if possible.</p>
+    <p><a href="connect.html">Back to server list</a></p>
+  </div>
 
   <footer>
-    Version 1.3.5
+    Version 1.4.0
   </footer>
 
   <script>
     const serversInfo = {
-      "facepunch_premium": {
-        "name": "[AU] Facepunch Premium",
-        "description": "Official Facepunch server, Premium slot",
-        "redirectUrl": "steam://run/252490//+connect 51.161.199.59:28015"
-      },
-      "facepunch_1": {
-        "name": "[AU] Facepunch 1",
-        "description": "Official Facepunch server 1",
-        "redirectUrl": "steam://run/252490//+connect 51.161.199.44:28015"
-      },
-      "rustafied_au": {
-        "name": "Rustafied.com - AU Medium",
-        "description": "Rustafied AU Medium server",
-        "redirectUrl": "steam://run/252490//+connect aumedium.rustafied.com:28015"
-      },
-      "local_staging": {
-        "name": "Local Staging",
-        "description": "Local dev server",
-        "redirectUrl": "steam://run/700580//+connect 192.168.1.80"
-      },
-      "local_vanilla": {
-        "name": "Local Vanilla",
-        "description": "Local vanilla Rust server",
-        "redirectUrl": "steam://run/252490//+connect 192.168.1.80"
-      },
-      "placeholder_1": {
-        "name": "[Blank Server 1]",
-        "description": "Fill me in!",
-        "redirectUrl": "#"
-      },
-      "placeholder_2": {
-        "name": "[Blank Server 2]",
-        "description": "Fill me in!",
-        "redirectUrl": "#"
-      },
-      "placeholder_3": {
-        "name": "[Blank Server 3]",
-        "description": "Fill me in!",
-        "redirectUrl": "#"
-      }
+      "facepunch_premium": "steam://run/252490//+connect 51.161.199.59:28015",
+      "facepunch_1": "steam://run/252490//+connect 51.161.199.44:28015",
+      "rustafied_au": "steam://run/252490//+connect aumedium.rustafied.com:28015",
+      "local_staging": "steam://run/700580//+connect 192.168.1.80",
+      "local_vanilla": "steam://run/252490//+connect 192.168.1.80",
+      "placeholder_1": "#",
+      "placeholder_2": "#",
+      "placeholder_3": "#"
     };
 
     function getQueryParam(param) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(param);
+      return new URLSearchParams(window.location.search).get(param);
     }
 
-    const contentDiv = document.getElementById('content');
-    const serverId = getQueryParam('server');
+    const serverKey = getQueryParam("server");
+    const url = serversInfo[serverKey];
 
-    function renderIndex() {
-      const ul = document.createElement('ul');
-      for (const [id, server] of Object.entries(serversInfo)) {
-        const li = document.createElement('li');
-        const link = document.createElement('a');
-        link.href = `connect.html?server=${id}`;
-        link.textContent = server.name;
-        li.appendChild(link);
-        ul.appendChild(li);
+    window.onload = function () {
+      if (url && url !== "#") {
+        document.getElementById("manualLink").href = url;
+        window.location.href = url;
+        setTimeout(() => window.close(), 10000); // 10 seconds before trying to close
+      } else {
+        document.getElementById("content").innerHTML = "<p>Invalid server link. <a href='connect.html'>Back to server list</a></p>";
       }
-      contentDiv.innerHTML = '';
-      contentDiv.appendChild(ul);
-    }
-
-    function renderServer(id) {
-      const server = serversInfo[id];
-      if (!server) {
-        contentDiv.innerHTML = `<p>Server not found. <a href="connect.html">Back to server list</a></p>`;
-        return;
-      }
-
-      contentDiv.innerHTML = `
-        <h2>${server.name}</h2>
-        <p>${server.description || ''}</p>
-        <p>Redirecting now... This page will close in <span id="countdown">5</span> seconds.</p>
-        <p><a href="${server.redirectUrl}">Click here if not redirected</a></p>
-        <p><a id="backLink" href="connect.html">Back to server list</a></p>
-        <p id="closeFail" style="display: none;">⚠️ You may need to close this tab manually.</p>
-      `;
-
-      // Redirect immediately
-      if (server.redirectUrl && server.redirectUrl !== "#") {
-        window.location.href = server.redirectUrl;
-      }
-
-      // Countdown to attempt to close
-      let seconds = 5;
-      const countdownEl = document.getElementById('countdown');
-      const closeFailEl = document.getElementById('closeFail');
-
-      const interval = setInterval(() => {
-        seconds--;
-        countdownEl.textContent = seconds;
-        if (seconds <= 0) {
-          clearInterval(interval);
-          window.close();
-
-          // If it didn't close, show manual close message
-          setTimeout(() => {
-            closeFailEl.style.display = 'block';
-          }, 500);
-        }
-      }, 1000);
-    }
-
-    if (serverId) {
-      renderServer(serverId);
-    } else {
-      renderIndex();
-    }
+    };
   </script>
 
 </body>
