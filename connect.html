@@ -60,7 +60,7 @@
   <div id="content"></div>
 
   <footer>
-    Version 1.1.0
+    Version 1.2.0
   </footer>
 
   <script>
@@ -78,7 +78,6 @@
       "rustafied_au": {
         "name": "Rustafied.com - AU Medium",
         "description": "Rustafied AU Medium server",
-        "note": "Check IPv4 for the domain, may want to switch to IP for faster connect",
         "redirectUrl": "steam://run/252490//+connect aumedium.rustafied.com:28015"
       },
       "local_staging": {
@@ -141,21 +140,24 @@
       contentDiv.innerHTML = `
         <h2>${server.name}</h2>
         <p>${server.description || ''}</p>
-        ${server.note ? `<p><em>Note: ${server.note}</em></p>` : ''}
-        <p>Redirecting to server in <span id="countdown">5</span> seconds...</p>
+        <p>Page will close automatically in <span id="countdown">5</span> seconds...</p>
         <p><a href="${server.redirectUrl}">Click here if not redirected</a></p>
         <p><a id="backLink" href="connect.html">Back to server list</a></p>
       `;
 
+      // Instant redirect
+      if (server.redirectUrl && server.redirectUrl !== "#") {
+        window.location.href = server.redirectUrl;
+      }
+
+      // Then countdown 5 seconds before closing page
       let seconds = 5;
       const countdownEl = document.getElementById('countdown');
       const interval = setInterval(() => {
         seconds--;
         if (seconds <= 0) {
           clearInterval(interval);
-          if(server.redirectUrl && server.redirectUrl !== "#") {
-            window.location.href = server.redirectUrl;
-          }
+          window.close();
         } else {
           countdownEl.textContent = seconds;
         }
