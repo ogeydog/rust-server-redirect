@@ -52,7 +52,7 @@
   </div>
 
   <footer>
-    Version 1.7.7
+    Version 1.7.8
   </footer>
 
   <script>
@@ -115,6 +115,7 @@
         }
         if (seconds === 0) {
           clearInterval(interval);
+          window.close();
           window.location.href = "close.html";
         }
       }, 1000);
