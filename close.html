@@ -1,46 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Closing Page</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      text-align: center;
-    }
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <title>Close Window</title>
+  <script>
+    window.onload = function() {
+      window.close();
+    };
+  </script>
 </head>
 <body>
-  <div>
-    <p>Attempting to close this page...</p>
-    <p>If it doesn’t close automatically, <a href="#" onclick="manualClose()">click here to close it manually</a>.</p>
-  </div>
-
-  <script>
-    function manualClose() {
-      window.open('', '_self');
-      window.close();
-    }
-
-    // Attempt 1
-    window.close();
-
-    // Attempt 2 fallback
-    setTimeout(() => {
-      window.open('', '_self');
-      window.close();
-    }, 100);
-  </script>
 </body>
 </html>
