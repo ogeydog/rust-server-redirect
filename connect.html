@@ -42,45 +42,91 @@
 </head>
 <body>
 
-  <h1>Rust Servers</h1>
   <div id="content">
-    <p>Redirecting you now... if nothing happens, <a id="manualLink" href="#">click here</a>.</p>
-    <p>This tab will close in ~10 seconds if possible.</p>
-    <p><a href="connect.html">Back to server list</a></p>
+    <h1>Rust Server Redirect</h1>
+    <ul id="serverList"></ul>
+    <div id="redirecting" style="display:none;">
+      <p>Redirecting... this page will close in <span id="countdown">5</span> seconds.</p>
+      <p><a href="connect.html">Back to server list</a></p>
+    </div>
   </div>
 
   <footer>
-    Version 1.4.0
+    Version 1.7.7
   </footer>
 
   <script>
-    const serversInfo = {
-      "facepunch_premium": "steam://run/252490//+connect 51.161.199.59:28015",
-      "facepunch_1": "steam://run/252490//+connect 51.161.199.44:28015",
-      "rustafied_au": "steam://run/252490//+connect aumedium.rustafied.com:28015",
-      "local_staging": "steam://run/700580//+connect 192.168.1.80",
-      "local_vanilla": "steam://run/252490//+connect 192.168.1.80",
-      "placeholder_1": "#",
-      "placeholder_2": "#",
-      "placeholder_3": "#"
-    };
-
-    function getQueryParam(param) {
-      return new URLSearchParams(window.location.search).get(param);
-    }
-
-    const serverKey = getQueryParam("server");
-    const url = serversInfo[serverKey];
-
-    window.onload = function () {
-      if (url && url !== "#") {
-        document.getElementById("manualLink").href = url;
-        window.location.href = url;
-        setTimeout(() => window.close(), 10000); // 10 seconds before trying to close
-      } else {
-        document.getElementById("content").innerHTML = "<p>Invalid server link. <a href='connect.html'>Back to server list</a></p>";
+    const servers = {
+      "facepunch_premium": {
+        name: "[AU] Facepunch Premium",
+        url: "steam://run/252490//+connect 51.161.199.59:28015"
+      },
+      "facepunch_1": {
+        name: "[AU] Facepunch 1",
+        url: "steam://run/252490//+connect 51.161.199.44:28015"
+      },
+      "rustafied_au": {
+        name: "Rustafied.com - AU Medium",
+        url: "steam://run/252490//+connect aumedium.rustafied.com:28015"
+      },
+      "local_staging": {
+        name: "Local Staging",
+        url: "steam://run/700580//+connect 192.168.1.80"
+      },
+      "local_vanilla": {
+        name: "Local Vanilla",
+        url: "steam://run/252490//+connect 192.168.1.80"
+      },
+      "blank_1": {
+        name: "[Blank Server 1]",
+        url: "#"
+      },
+      "blank_2": {
+        name: "[Blank Server 2]",
+        url: "#"
+      },
+      "blank_3": {
+        name: "[Blank Server 3]",
+        url: "#"
       }
     };
+
+    const params = new URLSearchParams(window.location.search);
+    const serverId = params.get("server");
+
+    if (serverId && servers[serverId] && servers[serverId].url !== "#") {
+      const server = servers[serverId];
+      document.getElementById("content").innerHTML = `
+        <h2>${server.name}</h2>
+        <p>Redirecting to <code>${server.url}</code></p>
+        <p>This page will close in <span id="countdown">5</span> seconds.</p>
+        <p><a href="${server.url}">Click here if nothing happens</a></p>
+        <p><a href="connect.html">Back to server list</a></p>
+      `;
+
+      window.location.href = server.url;
+
+      let seconds = 5;
+      const countdownElem = document.getElementById("countdown");
+      const interval = setInterval(() => {
+        seconds--;
+        if (countdownElem) {
+          countdownElem.textContent = seconds;
+        }
+        if (seconds === 0) {
+          clearInterval(interval);
+          window.location.href = "close.html";
+        }
+      }, 1000);
+
+    } else {
+      const list = document.getElementById("serverList");
+      for (const [id, server] of Object.entries(servers)) {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="connect.html?server=${id}">${server.name}</a>`;
+        list.appendChild(li);
+      }
+    }
   </script>
 
 </body>
