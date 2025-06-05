@@ -36,12 +36,14 @@
     a:hover, button:hover {
       text-decoration: underline;
     }
-    #serverDetails p {
-      margin: 0.25rem 0;
-    }
     #backLink {
       margin-top: 1rem;
       display: inline-block;
+    }
+    #closeFail {
+      margin-top: 1rem;
+      color: #a00;
+      font-size: 0.95rem;
     }
     footer {
       margin-top: auto;
@@ -60,7 +62,7 @@
   <div id="content"></div>
 
   <footer>
-    Version 1.3.0
+    Version 1.3.5
   </footer>
 
   <script>
@@ -90,7 +92,6 @@
         "description": "Local vanilla Rust server",
         "redirectUrl": "steam://run/252490//+connect 192.168.1.80"
       },
-      // Blank placeholders for future servers
       "placeholder_1": {
         "name": "[Blank Server 1]",
         "description": "Fill me in!",
@@ -140,26 +141,33 @@
       contentDiv.innerHTML = `
         <h2>${server.name}</h2>
         <p>${server.description || ''}</p>
-        <p>Page will close automatically in <span id="countdown">5</span> seconds...</p>
+        <p>Redirecting now... This page will close in <span id="countdown">5</span> seconds.</p>
         <p><a href="${server.redirectUrl}">Click here if not redirected</a></p>
         <p><a id="backLink" href="connect.html">Back to server list</a></p>
+        <p id="closeFail" style="display: none;">⚠️ You may need to close this tab manually.</p>
       `;
 
-      // Instant redirect
+      // Redirect immediately
       if (server.redirectUrl && server.redirectUrl !== "#") {
         window.location.href = server.redirectUrl;
       }
 
-      // Then countdown 5 seconds before closing page
+      // Countdown to attempt to close
       let seconds = 5;
       const countdownEl = document.getElementById('countdown');
+      const closeFailEl = document.getElementById('closeFail');
+
       const interval = setInterval(() => {
         seconds--;
+        countdownEl.textContent = seconds;
         if (seconds <= 0) {
           clearInterval(interval);
           window.close();
-        } else {
-          countdownEl.textContent = seconds;
+
+          // If it didn't close, show manual close message
+          setTimeout(() => {
+            closeFailEl.style.display = 'block';
+          }, 500);
         }
       }, 1000);
     }
