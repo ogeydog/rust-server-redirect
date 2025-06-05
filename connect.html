@@ -9,6 +9,9 @@
       padding: 2rem;
       max-width: 600px;
       margin: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     h1, h2 {
       color: #333;
@@ -40,6 +43,14 @@
       margin-top: 1rem;
       display: inline-block;
     }
+    footer {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -48,12 +59,15 @@
 
   <div id="content"></div>
 
+  <footer>
+    Version 1.1.0
+  </footer>
+
   <script>
     const serversInfo = {
       "facepunch_premium": {
         "name": "[AU] Facepunch Premium",
         "description": "Official Facepunch server, Premium slot",
-        // Your exact redirect link here:
         "redirectUrl": "steam://run/252490//+connect 51.161.199.59:28015"
       },
       "facepunch_1": {
@@ -76,6 +90,22 @@
         "name": "Local Vanilla",
         "description": "Local vanilla Rust server",
         "redirectUrl": "steam://run/252490//+connect 192.168.1.80"
+      },
+      // Blank placeholders for future servers
+      "placeholder_1": {
+        "name": "[Blank Server 1]",
+        "description": "Fill me in!",
+        "redirectUrl": "#"
+      },
+      "placeholder_2": {
+        "name": "[Blank Server 2]",
+        "description": "Fill me in!",
+        "redirectUrl": "#"
+      },
+      "placeholder_3": {
+        "name": "[Blank Server 3]",
+        "description": "Fill me in!",
+        "redirectUrl": "#"
       }
     };
 
@@ -92,7 +122,7 @@
       for (const [id, server] of Object.entries(serversInfo)) {
         const li = document.createElement('li');
         const link = document.createElement('a');
-        link.href = `connect.html?server=${id}`;  // Link to connect.html, not index.html
+        link.href = `connect.html?server=${id}`;
         link.textContent = server.name;
         li.appendChild(link);
         ul.appendChild(li);
@@ -123,7 +153,9 @@
         seconds--;
         if (seconds <= 0) {
           clearInterval(interval);
-          window.location.href = server.redirectUrl;
+          if(server.redirectUrl && server.redirectUrl !== "#") {
+            window.location.href = server.redirectUrl;
+          }
         } else {
           countdownEl.textContent = seconds;
         }
