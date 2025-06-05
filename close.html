@@ -1,13 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Close Window</title>
-  <script>
-    window.onload = function() {
-      window.close();
-    };
-  </script>
+  <meta charset="UTF-8" />
+  <title>Auto Close Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    #closeBtn {
+      display: none;
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <h1>This page will close automatically...</h1>
+  <p>If it doesn't, please click the button below to close it manually.</p>
+  <button id="closeBtn" onclick="window.close()">Close Now</button>
+
+  <script>
+    // Try to auto-close after 3 seconds
+    setTimeout(() => {
+      const closed = window.close();
+
+      // If window.close() returns false or is blocked, show the button
+      // Unfortunately, window.close() does NOT return a reliable value,
+      // so we show the button after attempting to close anyway
+      document.getElementById('closeBtn').style.display = 'inline-block';
+    }, 3000);
+  </script>
 </body>
 </html>
