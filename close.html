@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rust Redirect - Closing</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Redirecting complete</h1>
+  <p>This tab will close in <span id="countdown">5</span> seconds...</p>
+  <p>If it doesn’t, you can <button onclick="window.close()">close it manually</button>.</p>
+
+  <footer>Version 1.4.2</footer>
+
+  <script>
+    let seconds = 5;
+    const countdown = document.getElementById("countdown");
+
+    const timer = setInterval(() => {
+      seconds--;
+      countdown.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        window.close(); // Will only work if tab was opened by a user interaction
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
