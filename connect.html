@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rust Server Redirect</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 0.5rem 0;
+    }
+    a, button {
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 1rem;
+      padding: 0;
+      font-family: inherit;
+    }
+    a:hover, button:hover {
+      text-decoration: underline;
+    }
+    #serverDetails p {
+      margin: 0.25rem 0;
+    }
+    #backLink {
+      margin-top: 1rem;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Rust Servers</h1>
+
+  <div id="content"></div>
+
+  <script>
+    const serversInfo = {
+      "facepunch_premium": {
+        "name": "[AU] Facepunch Premium",
+        "ip": "51.161.199.59",
+        "port": 28015,
+        "description": "Official Facepunch server, Premium slot",
+        "redirectUrl": "steam://connect/51.161.199.59:28015"
+      },
+      "facepunch_1": {
+        "name": "[AU] Facepunch 1",
+        "ip": "51.161.199.44",
+        "port": 28015,
+        "description": "Official Facepunch server 1",
+        "redirectUrl": "steam://connect/51.161.199.44:28015"
+      },
+      "rustafied_au": {
+        "name": "Rustafied.com - AU Medium",
+        "host": "aumedium.rustafied.com",
+        "port": 28015,
+        "description": "Rustafied AU Medium server",
+        "note": "Check IPv4 for the domain, may want to switch to IP for faster connect",
+        "redirectUrl": "steam://connect/aumedium.rustafied.com:28015"
+      },
+      "local_staging": {
+        "name": "Local Staging",
+        "description": "Local dev server",
+        "redirectUrl": "steam://run/700580//+connect 192.168.1.80"
+      },
+      "local_vanilla": {
+        "name": "Local Vanilla",
+        "description": "Local vanilla Rust server",
+        "redirectUrl": "steam://run/252490//+connect 192.168.1.80"
+      }
+    };
+
+    // Utility: get URL query param
+    function getQueryParam(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+
+    const contentDiv = document.getElementById('content');
+    const serverId = getQueryParam('server');
+
+    // Render index of servers
+    function renderIndex() {
+      const ul = document.createElement('ul');
+      for (const [id, server] of Object.entries(serversInfo)) {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `?server=${id}`;
+        link.textContent = server.name;
+        li.appendChild(link);
+        ul.appendChild(li);
+      }
+      contentDiv.innerHTML = '';
+      contentDiv.appendChild(ul);
+    }
+
+    // Render specific server info with auto redirect
+    function renderServer(id) {
+      const server = serversInfo[id];
+      if (!server) {
+        contentDiv.innerHTML = `<p>Server not found. <a href="./">Back to server list</a></p>`;
+        return;
+      }
+
+      contentDiv.innerHTML = `
+        <h2>${server.name}</h2>
+        <p>${server.description || ''}</p>
+        ${server.ip ? `<p>IP: ${server.ip}:${server.port || ''}</p>` : ''}
+        ${server.host ? `<p>Host: ${server.host}:${server.port || ''}</p>` : ''}
+        ${server.note ? `<p><em>Note: ${server.note}</em></p>` : ''}
+        <p>Redirecting to server in <span id="countdown">5</span> seconds...</p>
+        <p><a href="${server.redirectUrl}">Click here if not redirected</a></p>
+        <p><a id="backLink" href="./">Back to server list</a></p>
+      `;
+
+      let seconds = 5;
+      const countdownEl = document.getElementById('countdown');
+      const interval = setInterval(() => {
+        seconds--;
+        if (seconds <= 0) {
+          clearInterval(interval);
+          window.location.href = server.redirectUrl;
+        } else {
+          countdownEl.textContent = seconds;
+        }
+      }, 1000);
+    }
+
+    // Decide what to render
+    if (serverId) {
+      renderServer(serverId);
+    } else {
+      renderIndex();
+    }
+  </script>
+
+</body>
+</html>
