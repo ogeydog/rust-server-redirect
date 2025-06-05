@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Rust Redirect - Closing</title>
+  <meta charset="UTF-8">
+  <title>Closing Page</title>
   <style>
     body {
-      font-family: sans-serif;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      font-family: sans-serif;
       text-align: center;
     }
-    footer {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #777;
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <h1>Redirecting complete</h1>
-  <p>This tab will close in <span id="countdown">5</span> seconds...</p>
-  <p>If it doesn’t, you can <button onclick="window.close()">close it manually</button>.</p>
-
-  <footer>Version 1.4.2</footer>
+  <div>
+    <p>Attempting to close this page...</p>
+    <p>If it doesn’t close automatically, <a href="#" onclick="manualClose()">click here to close it manually</a>.</p>
+  </div>
 
   <script>
-    let seconds = 5;
-    const countdown = document.getElementById("countdown");
+    function manualClose() {
+      window.open('', '_self');
+      window.close();
+    }
 
-    const timer = setInterval(() => {
-      seconds--;
-      countdown.textContent = seconds;
-      if (seconds <= 0) {
-        clearInterval(timer);
-        window.close(); // Will only work if tab was opened by a user interaction
-      }
-    }, 1000);
+    // Attempt 1
+    window.close();
+
+    // Attempt 2 fallback
+    setTimeout(() => {
+      window.open('', '_self');
+      window.close();
+    }, 100);
   </script>
 </body>
 </html>
